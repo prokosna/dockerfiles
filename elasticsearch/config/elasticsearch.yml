@@ -1,0 +1,8 @@
+network.host: 0.0.0.0
+
+cluster.name: ${CLUSTER_NAME}
+
+node.name: ${NODE_NAME}
+
+discovery.zen.ping.multicast.enabled: true
+discovery.zen.minimum_master_nodes: ${MASTER_NUM}
