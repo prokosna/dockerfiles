@@ -60,8 +60,8 @@ RUN set -x \
 ENV PATH /usr/share/kibana/bin:$PATH
 
 # plugins
-RUN kibana plugin --install elasticsearch/marvel/latest
-RUN kibana plugin --install elastic/sensu
+RUN kibana-plugin --install elasticsearch/marvel/latest
+RUN kibana-plugin --install elastic/sensu
 
 COPY docker-entrypoint.sh /
 
