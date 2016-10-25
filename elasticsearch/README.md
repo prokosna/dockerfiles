@@ -1,11 +1,13 @@
 # Elasticsearch Dockerfile
 
+I customized official Docker image of Elasticsearch a little bit.
+
 ## Usage
 
 - Build
 
 ```
-$ docker -t prokosna_elasticsearch:2.4 ./
+$ docker build -t prokosna_elasticsearch:2.4 ./
 ```
 
 - Data Volume Container
