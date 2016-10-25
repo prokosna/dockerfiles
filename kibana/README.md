@@ -7,11 +7,11 @@ Customized Kibana Docker image.
 - Build
 
 ```
-$ docker build -t prokosna_kibana:5.0 ./
+$ docker build -t prokosna_kibana:4.6 ./
 ```
 
 - Run
 
 ```
-$ docker run -d --name kibana -p 5601:5601 prokosna_kibana:5.0
+$ docker run -d --name kibana -p 5601:5601 prokosna_kibana:4.6
 ```

@@ -4,7 +4,6 @@ FROM debian:jessie
 RUN groupadd -r kibana && useradd -r -m -g kibana kibana
 
 RUN apt-get update && apt-get install -y \
-		apt-transport-https \
 		ca-certificates \
 		wget \
 	--no-install-recommends && rm -rf /var/lib/apt/lists/*
@@ -37,31 +36,25 @@ RUN set -x \
 # https://packages.elasticsearch.org/GPG-KEY-elasticsearch
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 46095ACC8548582C1A2699A9D27D666CD88E42B4
 
-ENV KIBANA_MAJOR 5.0
-ENV KIBANA_VERSION 5.0.0-rc1
+ENV KIBANA_MAJOR 4.6
+ENV KIBANA_VERSION 4.6.2
 
-#RUN echo "deb http://packages.elastic.co/kibana/${KIBANA_MAJOR}/debian stable main" > /etc/apt/sources.list.d/kibana.list
-RUN echo 'deb https://artifacts.elastic.co/packages/5.x-prerelease/apt stable main' > /etc/apt/sources.list.d/kibana.list
-# TODO figure out what's going on here and what it'll settle to for 5.0 GA
+RUN echo "deb http://packages.elastic.co/kibana/${KIBANA_MAJOR}/debian stable main" > /etc/apt/sources.list.d/kibana.list
 
 RUN set -x \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends kibana=$KIBANA_VERSION \
+	&& chown -R kibana:kibana /opt/kibana \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
-# the default "server.host" is "localhost" in 5+
-	&& sed -ri "s!^(\#\s*)?(server\.host:).*!\2 '0.0.0.0'!" /etc/kibana/kibana.yml \
-	&& grep -q "^server\.host: '0.0.0.0'\$" /etc/kibana/kibana.yml \
-	\
 # ensure the default configuration is useful when using --link
-	&& sed -ri "s!^(\#\s*)?(elasticsearch\.url:).*!\2 'http://elasticsearch:9200'!" /etc/kibana/kibana.yml \
-	&& grep -q "^elasticsearch\.url: 'http://elasticsearch:9200'\$" /etc/kibana/kibana.yml
+	&& sed -ri "s!^(\#\s*)?(elasticsearch\.url:).*!\2 'http://elasticsearch:9200'!" /opt/kibana/config/kibana.yml \
+	&& grep -q 'elasticsearch:9200' /opt/kibana/config/kibana.yml
 
-ENV PATH /usr/share/kibana/bin:$PATH
+ENV PATH /opt/kibana/bin:$PATH
 
-# plugins
-RUN kibana-plugin --install elasticsearch/marvel/latest
-RUN kibana-plugin --install elastic/sensu
+RUN kibana plugin --install elasticsearch/marvel/latest
+RUN kibana plugin --install elastic/sensu
 
 COPY docker-entrypoint.sh /
 
